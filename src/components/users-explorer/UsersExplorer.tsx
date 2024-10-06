@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
-import InputField from '../form/InputField';
-import searchService from 'services/searchService';
 import { useDebounce } from '@uidotdev/usehooks';
-import { useQuery } from '@tanstack/react-query';
-import CircularProgress from '@mui/material/CircularProgress';
-import UserCard from 'components/users-explorer/UserCard';
+import InputField from '../form/InputField';
+import UsersList from 'components/users-explorer/UsersList';
 
 const SEARCH_QUERY_DEBOUNCE_MS = 2000;
 
@@ -15,12 +12,6 @@ const UsersExplorer: React.FC = () => {
     SEARCH_QUERY_DEBOUNCE_MS
   );
 
-  const searchUsersQuery = useQuery({
-    queryKey: ['searchUsers', debouncedSearchQuery],
-    queryFn: async () => await searchService.searchUsers(debouncedSearchQuery),
-    refetchOnWindowFocus: false,
-  });
-
   return (
     <main>
       <h1>Github Users Explorer</h1>
@@ -29,14 +20,7 @@ const UsersExplorer: React.FC = () => {
         placeholder="Enter username"
         onChange={(e) => setSearchQuery(e?.target?.value)}
       />
-      {searchUsersQuery.isLoading && <CircularProgress />}
-      {searchUsersQuery.isSuccess && searchUsersQuery.data?.items?.length ? (
-        <section>
-          {searchUsersQuery.data.items.map((user) => (
-            <UserCard login={user.login} avatarUrl={user.avatar_url} />
-          ))}
-        </section>
-      ) : null}
+      <UsersList searchQuery={debouncedSearchQuery} />
     </main>
   );
 };
