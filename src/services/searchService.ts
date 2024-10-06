@@ -1,13 +1,13 @@
 import http from './httpService';
 import { User } from '../types/domain';
 import { apiUrl } from '../config.json';
-import { SearchResult } from 'types/app';
+import { SearchUsersResult } from 'types/app';
 
 const apiEndpoint = `${apiUrl}/search`;
 
 export const searchUsers = async (
   searchQuery: string
-): Promise<SearchResult<User>> => {
+): Promise<SearchUsersResult<User>> => {
   try {
     const url = `${apiEndpoint}/users?q=${encodeURIComponent(searchQuery)}`;
     const { data } = await http.get(url);
