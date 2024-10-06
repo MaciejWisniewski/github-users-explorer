@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { logError } from 'helpers/logger';
 
 axios.interceptors.response.use(undefined, (ex) => {
   const expectedError =
@@ -6,6 +7,9 @@ axios.interceptors.response.use(undefined, (ex) => {
 
   if (!expectedError && !axios.isCancel(ex)) {
     console.error('An unexpected error has occurred');
+    logError(ex);
+    // It would be better to show a toast if the app used them
+    window.alert('An unexpected error has occurred');
   }
 
   return Promise.reject(ex);

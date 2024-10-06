@@ -34,7 +34,11 @@ const UsersList: React.FC<UsersListProps> = ({ searchQuery }) => {
       {displayList ? (
         <>
           {searchUsersQuery.data.items.map((user) => (
-            <UserCard login={user.login} avatarUrl={user.avatar_url} />
+            <UserCard
+              key={user.id}
+              login={user.login}
+              avatarUrl={user.avatar_url}
+            />
           ))}
         </>
       ) : null}
