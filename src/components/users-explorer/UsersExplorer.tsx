@@ -20,7 +20,9 @@ const UsersExplorer: React.FC = () => {
         placeholder="Enter username"
         onChange={(e) => setSearchQuery(e?.target?.value)}
       />
-      <UsersList searchQuery={debouncedSearchQuery} />
+      {searchQuery && debouncedSearchQuery ? (
+        <UsersList searchQuery={debouncedSearchQuery} />
+      ) : null}
     </main>
   );
 };

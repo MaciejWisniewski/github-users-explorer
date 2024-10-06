@@ -6,10 +6,14 @@ import { SearchUsersResult } from 'types/app';
 const apiEndpoint = `${apiUrl}/search`;
 
 export const searchUsers = async (
-  searchQuery: string
+  searchQuery: string,
+  page: number,
+  perPage: number
 ): Promise<SearchUsersResult<User>> => {
   try {
-    const url = `${apiEndpoint}/users?q=${encodeURIComponent(searchQuery)}`;
+    const url = `${apiEndpoint}/users?q=${encodeURIComponent(
+      searchQuery
+    )}&page=${page}&per_page=${perPage}`;
     const { data } = await http.get(url);
 
     return data;
