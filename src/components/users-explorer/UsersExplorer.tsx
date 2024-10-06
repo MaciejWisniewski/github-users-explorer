@@ -4,6 +4,7 @@ import searchService from 'services/searchService';
 import { useDebounce } from '@uidotdev/usehooks';
 import { useQuery } from '@tanstack/react-query';
 import CircularProgress from '@mui/material/CircularProgress';
+import UserCard from 'components/users-explorer/UserCard';
 
 const SEARCH_QUERY_DEBOUNCE_MS = 2000;
 
@@ -30,11 +31,11 @@ const UsersExplorer: React.FC = () => {
       />
       {searchUsersQuery.isLoading && <CircularProgress />}
       {searchUsersQuery.isSuccess && searchUsersQuery.data?.items?.length ? (
-        <ul>
+        <section>
           {searchUsersQuery.data.items.map((user) => (
-            <li>{user.login}</li>
+            <UserCard login={user.login} avatarUrl={user.avatar_url} />
           ))}
-        </ul>
+        </section>
       ) : null}
     </main>
   );

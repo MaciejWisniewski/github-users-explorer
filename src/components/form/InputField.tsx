@@ -1,14 +1,12 @@
 import TextField, { TextFieldProps } from '@mui/material/TextField';
 import { styled } from '@mui/system';
 
-const Root = styled(TextField)`
+const TextFieldStyled = styled(TextField)`
   width: 100%;
 `;
 
 const InputField: React.FC<TextFieldProps> = (props) => {
-  return (
-    <Root variant="outlined" {...props}/>
-  );
+  return <TextFieldStyled variant="outlined" {...props} />;
 };
 
 export default InputField;
