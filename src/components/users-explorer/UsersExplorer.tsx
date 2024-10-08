@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDebounce } from '@uidotdev/usehooks';
 import InputField from '../form/InputField';
 import UsersList from 'components/users-explorer/UsersList';
@@ -16,6 +16,10 @@ const UsersExplorer: React.FC = () => {
     searchQuery,
     SEARCH_QUERY_DEBOUNCE_MS
   );
+
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [debouncedSearchQuery]);
 
   const {
     data,
