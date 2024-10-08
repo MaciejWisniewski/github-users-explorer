@@ -3,4 +3,12 @@
   margin: 0 auto;
   padding: 0 2rem 2rem 2rem;
   text-align: center;
+  padding-left: calc(100vw - 100%);
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 400px;
 }

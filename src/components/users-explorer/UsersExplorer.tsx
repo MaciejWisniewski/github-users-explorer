@@ -1,16 +1,39 @@
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDebounce } from '@uidotdev/usehooks';
 import InputField from '../form/InputField';
 import UsersList from 'components/users-explorer/UsersList';
 
+import { Alert, Box, CircularProgress } from '@mui/material';
+import { useSearchUsers } from 'services/queries/useSearchUsers';
+
 const SEARCH_QUERY_DEBOUNCE_MS = 2000;
 
 const UsersExplorer: React.FC = () => {
+  const [currentPage, setCurrentPage] = useState(0);
   const [searchQuery, setSearchQuery] = useState('');
+
   const debouncedSearchQuery = useDebounce(
     searchQuery,
     SEARCH_QUERY_DEBOUNCE_MS
   );
+
+  const {
+    data,
+    error,
+    hasNextPage,
+    isError,
+    isFetchingNextPage,
+    isLoading,
+    fetchNextPage,
+  } = useSearchUsers(debouncedSearchQuery, currentPage);
+
+  const handleNextPage = useCallback(() => {
+    setCurrentPage((currentPage) => currentPage + 1);
+    fetchNextPage();
+  }, [setCurrentPage, fetchNextPage]);
+
+  const pages = data?.pages;
+  const users = pages?.flatMap((page) => page.items).filter(Boolean) || [];
 
   return (
     <main>
@@ -20,9 +43,23 @@ const UsersExplorer: React.FC = () => {
         placeholder="Enter username"
         onChange={(e) => setSearchQuery(e?.target?.value)}
       />
-      {searchQuery && debouncedSearchQuery ? (
-        <UsersList searchQuery={debouncedSearchQuery} />
-      ) : null}
+      <Box sx={{ p: 2 }}>
+        {!isLoading && debouncedSearchQuery ? (
+          <UsersList
+            hasNextPage={hasNextPage}
+            isFetchingNextPage={isFetchingNextPage}
+            users={users}
+            onNextPage={handleNextPage}
+          />
+        ) : null}
+        {isLoading ? <CircularProgress /> : null}
+        {!isLoading && isError ? (
+          <Alert
+            variant="filled"
+            severity="error"
+          >{`There was an error: ${error?.message}`}</Alert>
+        ) : null}
+      </Box>
     </main>
   );
 };

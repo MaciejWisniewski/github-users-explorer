@@ -1,94 +1,50 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import searchService from 'services/searchService';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import React, { useEffect } from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import UserCard from 'components/users-explorer/UserCard';
-import { Alert, styled } from '@mui/material';
+import { Alert } from '@mui/material';
 import { useInView } from 'react-intersection-observer';
-
-const USERS_PER_PAGE = 5;
-
-const SectionStyled = styled('section')`
-  margin: 1rem;
-`;
+import { User } from 'types/domain';
 
 type UsersListProps = {
-  searchQuery: string;
+  hasNextPage: boolean;
+  isFetchingNextPage: boolean;
+  users: User[];
+  onNextPage: () => void;
 };
 
-const UsersList: React.FC<UsersListProps> = ({ searchQuery }) => {
-  const [currentPage, setCurrentPage] = useState(0);
+const UsersList: React.FC<UsersListProps> = ({
+  hasNextPage,
+  isFetchingNextPage,
+  users,
+  onNextPage,
+}) => {
   const { ref, inView } = useInView();
-
-  const getNextPage = (totalCount: number) =>
-    currentPage * USERS_PER_PAGE < totalCount ? currentPage + 1 : null;
-
-  const {
-    data,
-    error,
-    hasNextPage,
-    isError,
-    isFetchingNextPage,
-    isLoading,
-    fetchNextPage,
-  } = useInfiniteQuery({
-    queryKey: ['searchUsers', searchQuery],
-    queryFn: async ({ pageParam }) =>
-      await searchService.searchUsers(
-        searchQuery,
-        pageParam + 1,
-        USERS_PER_PAGE
-      ),
-    initialPageParam: 0,
-    getNextPageParam: (searchResult) => getNextPage(searchResult.total_count),
-    refetchOnWindowFocus: false,
-  });
-
-  const handleNextPage = useCallback(() => {
-    setCurrentPage((currentPage) => currentPage + 1);
-    fetchNextPage();
-  }, [setCurrentPage, fetchNextPage]);
 
   useEffect(() => {
     if (inView) {
-      handleNextPage();
+      onNextPage();
     }
-  }, [handleNextPage, inView]);
-
-  const pages = data?.pages;
-  const hasResults = pages?.length;
+  }, [onNextPage, inView]);
 
   return (
-    <SectionStyled>
-      {hasResults ? (
-        <>
-          {pages.map((page) =>
-            page?.items?.map((user) => (
-              <UserCard
-                key={user.id}
-                login={user.login}
-                avatarUrl={user.avatar_url}
-              />
-            ))
-          )}
-          {hasNextPage ? (
-            <div ref={ref}>{isFetchingNextPage && <CircularProgress />}</div>
-          ) : null}
-        </>
-      ) : null}
-      {isLoading ? <CircularProgress /> : null}
-      {!isLoading && !hasResults ? (
+    <>
+      {users?.length ? (
+        users.map((user: User) => (
+          <UserCard
+            key={user.id}
+            login={user.login}
+            avatarUrl={user.avatar_url}
+          />
+        ))
+      ) : (
         <Alert variant="filled" severity="info">
           No users found.
         </Alert>
+      )}
+      {hasNextPage ? (
+        <div ref={ref}>{isFetchingNextPage && <CircularProgress />}</div>
       ) : null}
-      {isError ? (
-        <Alert
-          variant="filled"
-          severity="error"
-        >{`There was an error: ${error.message}`}</Alert>
-      ) : null}
-    </SectionStyled>
+    </>
   );
 };
 

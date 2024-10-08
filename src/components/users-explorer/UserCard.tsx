@@ -11,8 +11,9 @@ import React from 'react';
 const CardStyled = styled(Card)`
   max-width: 345px;
   padding: 1rem 1rem 0 1rem;
-  margin: 1rem;
+  margin: 0 1rem 1rem 1rem;
   border: 1px solid var(--black);
+  pointer-events: none;
 `;
 
 type UserCardProps = {
