@@ -3,7 +3,7 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import ResultsSummary from 'components/users-explorer/results-summary/ResultsSummary';
 import UsersList from 'components/users-explorer/users-list/UsersList';
-import { Alert, Box, CircularProgress, Typography } from '@mui/material';
+import { Alert, CircularProgress, Typography } from '@mui/material';
 import { useSearchUsers } from 'services/queries/useSearchUsers';
 import { useForm } from 'react-hook-form';
 import debounce from 'debounce';
@@ -17,6 +17,7 @@ type FormInput = {
 };
 
 const validationSchema = yup.object({
+  // Functional programming concept - function chaining
   searchQuery: yup
     .string()
     .min(3, 'Enter at least 3 characters')
@@ -41,6 +42,7 @@ const UsersExplorer: React.FC = () => {
     isError,
     isFetchingNextPage,
     isLoading,
+    // Functional programming concept - function as a first-class citizen
     fetchNextPage,
   } = useSearchUsers(debouncedSearchQuery, currentPage);
 
@@ -62,6 +64,7 @@ const UsersExplorer: React.FC = () => {
   }, SEARCH_QUERY_DEBOUNCE_MS);
 
   const pages = data?.pages;
+  // Functional programming concept - higher order function and function chaining
   const users = pages?.flatMap((page) => page.items).filter(Boolean) || [];
 
   return (
