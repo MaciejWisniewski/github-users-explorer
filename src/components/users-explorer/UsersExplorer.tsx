@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import UsersList from 'components/users-explorer/UsersList';
+import ResultsSummary from 'components/users-explorer/results-summary/ResultsSummary';
+import UsersList from 'components/users-explorer/users-list/UsersList';
 import { Alert, Box, CircularProgress, Typography } from '@mui/material';
 import { useSearchUsers } from 'services/queries/useSearchUsers';
 import { useForm } from 'react-hook-form';
 import debounce from 'debounce';
-import ResultsSummary from 'components/users-explorer/ResultsSummary';
 import InputField from 'components/form/InputField';
+import { StickyBox } from './styled';
 
 const SEARCH_QUERY_DEBOUNCE_MS = 2000;
 
@@ -65,21 +66,23 @@ const UsersExplorer: React.FC = () => {
 
   return (
     <main>
-      <h1>Github Users Explorer</h1>
-      <Typography sx={{ mb: 2 }}>Search for Github users!</Typography>
-      <InputField
-        placeholder="Enter username"
-        errorMessage={formState.errors['searchQuery']?.message}
-        register={() => register('searchQuery')}
-        onChange={handleSearchQueryChange}
-        inputRef={inputRef}
-      />
-      {!isLoading && debouncedSearchQuery && pages ? (
-        <ResultsSummary
-          searchQuery={debouncedSearchQuery}
-          totalCount={pages[0]?.total_count}
+      <StickyBox>
+        <h1>Github Users Explorer</h1>
+        <Typography sx={{ mb: 2 }}>Search for Github users!</Typography>
+        <InputField
+          placeholder="Enter username"
+          errorMessage={formState.errors['searchQuery']?.message}
+          register={() => register('searchQuery')}
+          onChange={handleSearchQueryChange}
+          inputRef={inputRef}
         />
-      ) : null}
+        {!isLoading && debouncedSearchQuery && pages ? (
+          <ResultsSummary
+            searchQuery={debouncedSearchQuery}
+            totalCount={pages[0]?.total_count}
+          />
+        ) : null}
+      </StickyBox>
       <Box sx={{ p: 2 }}>
         {!isLoading && debouncedSearchQuery ? (
           <UsersList

@@ -1,22 +1,11 @@
 import {
-  Card,
   CardActionArea,
   CardContent,
   CardMedia,
-  styled,
   Typography,
 } from '@mui/material';
+import { CardStyled } from 'components/users-explorer/user-card/styled';
 import React from 'react';
-
-const CardStyled = styled(Card)`
-  max-width: 345px;
-  ${({ theme }) => `
-    padding: ${theme.spacing(2)} ${theme.spacing(2)} 0 ${theme.spacing(2)};
-    margin: 0 ${theme.spacing(2)} ${theme.spacing(2)} ${theme.spacing(2)};
-  `}
-  border: 1px solid var(--black);
-  pointer-events: none;
-`;
 
 type UserCardProps = {
   login: string;

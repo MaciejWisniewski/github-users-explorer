@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react';
-import CircularProgress from '@mui/material/CircularProgress';
-import UserCard from 'components/users-explorer/UserCard';
-import { Alert } from '@mui/material';
+import { Alert, CircularProgress } from '@mui/material';
+import UserCard from 'components/users-explorer/user-card/UserCard';
 import { useInView } from 'react-intersection-observer';
 import { User } from 'types/domain';
 

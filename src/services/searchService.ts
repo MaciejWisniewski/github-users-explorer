@@ -27,6 +27,9 @@ export const searchUsers = async (
 
     return data;
   } catch (ex: any) {
+    if (ex.response && ex.response.status === 403) {
+      alert(ex?.response?.data?.message);
+    }
     if (ex.response && ex.response.status === 404) return EMPTY_RESULT;
     return ex;
   }
