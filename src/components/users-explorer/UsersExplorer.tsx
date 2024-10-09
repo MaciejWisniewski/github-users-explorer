@@ -2,17 +2,12 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import UsersList from 'components/users-explorer/UsersList';
-import {
-  Alert,
-  Box,
-  CircularProgress,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Alert, Box, CircularProgress, Typography } from '@mui/material';
 import { useSearchUsers } from 'services/queries/useSearchUsers';
 import { useForm } from 'react-hook-form';
 import debounce from 'debounce';
 import ResultsSummary from 'components/users-explorer/ResultsSummary';
+import InputField from 'components/form/InputField';
 
 const SEARCH_QUERY_DEBOUNCE_MS = 2000;
 
@@ -32,7 +27,7 @@ const UsersExplorer: React.FC = () => {
   const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const { register, trigger } = useForm<FormInput>({
+  const { formState, register, trigger } = useForm<FormInput>({
     resolver: yupResolver(validationSchema),
     mode: 'all',
     defaultValues: { searchQuery: '' },
@@ -72,13 +67,12 @@ const UsersExplorer: React.FC = () => {
     <main>
       <h1>Github Users Explorer</h1>
       <Typography sx={{ mb: 2 }}>Search for Github users!</Typography>
-      <TextField
-        variant="outlined"
+      <InputField
         placeholder="Enter username"
-        {...register('searchQuery')}
+        errorMessage={formState.errors['searchQuery']?.message}
+        register={() => register('searchQuery')}
         onChange={handleSearchQueryChange}
         inputRef={inputRef}
-        sx={{ width: '100%' }}
       />
       {!isLoading && debouncedSearchQuery && pages ? (
         <ResultsSummary
