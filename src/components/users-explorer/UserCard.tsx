@@ -10,8 +10,10 @@ import React from 'react';
 
 const CardStyled = styled(Card)`
   max-width: 345px;
-  padding: 1rem 1rem 0 1rem;
-  margin: 0 1rem 1rem 1rem;
+  ${({ theme }) => `
+    padding: ${theme.spacing(2)} ${theme.spacing(2)} 0 ${theme.spacing(2)};
+    margin: 0 ${theme.spacing(2)} ${theme.spacing(2)} ${theme.spacing(2)};
+  `}
   border: 1px solid var(--black);
   pointer-events: none;
 `;
