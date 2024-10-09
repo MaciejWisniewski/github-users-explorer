@@ -83,23 +83,21 @@ const UsersExplorer: React.FC = () => {
           />
         ) : null}
       </StickyBox>
-      <Box sx={{ p: 2 }}>
-        {!isLoading && debouncedSearchQuery ? (
-          <UsersList
-            hasNextPage={hasNextPage}
-            isFetchingNextPage={isFetchingNextPage}
-            users={users}
-            onNextPage={handleNextPage}
-          />
-        ) : null}
-        {isLoading ? <CircularProgress /> : null}
-        {!isLoading && isError ? (
-          <Alert
-            variant="filled"
-            severity="error"
-          >{`There was an error: ${error?.message}`}</Alert>
-        ) : null}
-      </Box>
+      {!isLoading && debouncedSearchQuery ? (
+        <UsersList
+          hasNextPage={hasNextPage}
+          isFetchingNextPage={isFetchingNextPage}
+          users={users}
+          onNextPage={handleNextPage}
+        />
+      ) : null}
+      {isLoading ? <CircularProgress /> : null}
+      {!isLoading && isError ? (
+        <Alert
+          variant="filled"
+          severity="error"
+        >{`There was an error: ${error?.message}`}</Alert>
+      ) : null}
     </main>
   );
 };
