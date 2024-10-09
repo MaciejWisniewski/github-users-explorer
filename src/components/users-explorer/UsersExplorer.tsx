@@ -66,7 +66,7 @@ const UsersExplorer: React.FC = () => {
 
   return (
     <main>
-      <StickyBox>
+      <StickyBox data-testid="sticky-box">
         <h1>Github Users Explorer</h1>
         <Typography sx={{ mb: 2 }}>Search for Github users!</Typography>
         <InputField
