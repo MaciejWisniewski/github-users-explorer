@@ -1,25 +1,35 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { useDebounce } from '@uidotdev/usehooks';
-import InputField from '../form/InputField';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import UsersList from 'components/users-explorer/UsersList';
-
-import { Alert, Box, CircularProgress } from '@mui/material';
+import { Alert, Box, CircularProgress, TextField } from '@mui/material';
 import { useSearchUsers } from 'services/queries/useSearchUsers';
+import { useForm } from 'react-hook-form';
+import debounce from 'debounce';
 
 const SEARCH_QUERY_DEBOUNCE_MS = 2000;
 
+type FormInput = {
+  searchQuery: string;
+};
+
+const validationSchema = yup.object({
+  searchQuery: yup
+    .string()
+    .min(3, 'Enter at least 3 characters')
+    .required('Required'),
+});
+
 const UsersExplorer: React.FC = () => {
   const [currentPage, setCurrentPage] = useState(0);
-  const [searchQuery, setSearchQuery] = useState('');
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+  const inputRef = useRef<HTMLInputElement>(null);
 
-  const debouncedSearchQuery = useDebounce(
-    searchQuery,
-    SEARCH_QUERY_DEBOUNCE_MS
-  );
-
-  useEffect(() => {
-    setCurrentPage(0);
-  }, [debouncedSearchQuery]);
+  const { register, trigger } = useForm<FormInput>({
+    resolver: yupResolver(validationSchema),
+    mode: 'all',
+    defaultValues: { searchQuery: '' },
+  });
 
   const {
     data,
@@ -31,10 +41,22 @@ const UsersExplorer: React.FC = () => {
     fetchNextPage,
   } = useSearchUsers(debouncedSearchQuery, currentPage);
 
+  useEffect(() => {
+    setCurrentPage(0);
+  }, [debouncedSearchQuery]);
+
   const handleNextPage = useCallback(() => {
     setCurrentPage((currentPage) => currentPage + 1);
     fetchNextPage();
   }, [setCurrentPage, fetchNextPage]);
+
+  const handleSearchQueryChange = debounce(async (e) => {
+    // blur() and focus() here are only for the purpose of making react-hook-form validation work. Regardless of mode it validates the field only when the input is blurred
+    inputRef?.current?.blur();
+    const isValid = await trigger();
+    if (isValid) setDebouncedSearchQuery(e.target.value);
+    inputRef?.current?.focus();
+  }, SEARCH_QUERY_DEBOUNCE_MS);
 
   const pages = data?.pages;
   const users = pages?.flatMap((page) => page.items).filter(Boolean) || [];
@@ -43,9 +65,13 @@ const UsersExplorer: React.FC = () => {
     <main>
       <h1>Github Users Explorer</h1>
       <p>Search for Github users!</p>
-      <InputField
+      <TextField
+        variant="outlined"
         placeholder="Enter username"
-        onChange={(e) => setSearchQuery(e?.target?.value)}
+        {...register('searchQuery')}
+        onChange={handleSearchQueryChange}
+        inputRef={inputRef}
+        sx={{ width: '100%' }}
       />
       <Box sx={{ p: 2 }}>
         {!isLoading && debouncedSearchQuery ? (
