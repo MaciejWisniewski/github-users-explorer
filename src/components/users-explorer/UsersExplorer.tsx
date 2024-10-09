@@ -2,10 +2,17 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import UsersList from 'components/users-explorer/UsersList';
-import { Alert, Box, CircularProgress, TextField } from '@mui/material';
+import {
+  Alert,
+  Box,
+  CircularProgress,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { useSearchUsers } from 'services/queries/useSearchUsers';
 import { useForm } from 'react-hook-form';
 import debounce from 'debounce';
+import ResultsSummary from 'components/users-explorer/ResultsSummary';
 
 const SEARCH_QUERY_DEBOUNCE_MS = 2000;
 
@@ -64,7 +71,7 @@ const UsersExplorer: React.FC = () => {
   return (
     <main>
       <h1>Github Users Explorer</h1>
-      <p>Search for Github users!</p>
+      <Typography sx={{ mb: 2 }}>Search for Github users!</Typography>
       <TextField
         variant="outlined"
         placeholder="Enter username"
@@ -73,6 +80,12 @@ const UsersExplorer: React.FC = () => {
         inputRef={inputRef}
         sx={{ width: '100%' }}
       />
+      {!isLoading && debouncedSearchQuery && pages ? (
+        <ResultsSummary
+          searchQuery={debouncedSearchQuery}
+          totalCount={pages[0]?.total_count}
+        />
+      ) : null}
       <Box sx={{ p: 2 }}>
         {!isLoading && debouncedSearchQuery ? (
           <UsersList
