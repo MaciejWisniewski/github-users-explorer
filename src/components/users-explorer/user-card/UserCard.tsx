@@ -14,7 +14,7 @@ type UserCardProps = {
 
 const UserCard: React.FC<UserCardProps> = ({ login, avatarUrl }) => {
   return (
-    <CardStyled>
+    <CardStyled data-testid={`user-card-${login}`}>
       <CardActionArea>
         <CardMedia
           component="img"
